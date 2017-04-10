@@ -20,20 +20,35 @@ public class KakuroPrograAnalisis {
         // TODO code application logic here
         System.out.println("Que pasó?");
         ArrayList<Integer> lista = new ArrayList<>();
-        generar(0,3,0,8,1,lista);
+        lista.add(0);
+        lista.add(0);
+        lista.add(0);
+        ArrayList<ArrayList> listaFinal = new ArrayList<>();
+        generar(0,3,0,10,1,lista,listaFinal);
     }
-    public void generar(int num,int cantidad,int k,int meta,int i,ArrayList lista){
-        if(k == cantidad && num == meta){
-            System.out.println(lista);
-        }else if(k == cantidad){
+    public static void generar(int num,int cantidad,int k,int meta,int i,ArrayList<Integer> lista,ArrayList<ArrayList> listaFinal){
+        if(lista.size() == cantidad & k == cantidad && num == meta){
+            listaFinal.add(lista);
+            System.out.println(listaFinal);
+        }else if(lista.size() == cantidad & k == cantidad){
             System.out.println("No hay");
+
         }else{
-            for(int j = 0; j<10; j++){
-                if(num+j < meta & k+1 != cantidad | num+j == meta & k+1 == cantidad ){
-                    lista.add(j);
-                    generar(num+j,cantidad,k+1,meta,i+1,lista);
+            for(int j = 1; j<10; j++){
+                if(num+j < meta & k+1 != cantidad & estaNumero(lista,j) == false | num+j == meta & k+1 == cantidad & estaNumero(lista,j) == false){
+                    //System.out.println(lista);
+                    lista.set(k, j);
+                    generar(num+j,cantidad,k+1,meta,i+1,lista,listaFinal);
                 }
             }
         }
-    } 
+    }
+    public static boolean estaNumero(ArrayList<Integer> lista, int numero){
+        for(int i = 0; i<lista.size() ;i++){
+            if(lista.get(i) == numero){
+                return true;
+            }
+        }
+        return false;
+    }
 }
