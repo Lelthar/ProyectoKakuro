@@ -6,6 +6,7 @@
 package kakuroprograanalisis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -18,21 +19,27 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        System.out.println("Que pasó?");
-        ArrayList<Integer> lista = new ArrayList<>();
-        lista.add(0);
-        lista.add(0);
-        lista.add(0);
-        ArrayList<ArrayList> listaFinal = new ArrayList<>();
-        generar(0,3,0,8,1,lista,listaFinal);
+        int[]lista = new int[3];
+        lista[0] = 0;
+        lista[1] = 0;
+        lista[2] = 0;
+        ArrayList<int[]> listaFinal = new ArrayList<>();
+        int contador = 0;
+        //ArrayList<int[]> listaFinal = new ArrayList<>();
+        generar(0,3,0,8,1,lista,listaFinal,contador);
+        for(int i = 0; i< listaFinal.size();i++){
+            System.out.println(Arrays.toString(listaFinal.get(i)));
+        }
+        
     }
-    public static void generar(int num,int cantidad,int k,int meta,int i,ArrayList<Integer> lista,ArrayList<ArrayList> listaFinal){
-        if(lista.size() == cantidad & k == cantidad && num == meta){
-            System.out.println(lista);
-            listaFinal.add(lista);
-            lista.set(k-1,0);
-            System.out.println(listaFinal);
-        }else if(lista.size() == cantidad & k == cantidad){
+    public static void generar(int num,int cantidad,int k,int meta,int i,int[] lista,ArrayList<int[]> listaFinal,int contador){
+        if(lista.length == cantidad & k == cantidad && num == meta){
+            //System.out.println(Arrays.toString(lista));
+            listaFinal.add(vectorConversion(lista));
+            lista[k-1] = 0;
+            //System.out.println(Arrays.toString(listaFinal.get(contador)));
+            contador++;
+        }else if(lista.length == cantidad & k == cantidad){
             System.out.println("No hay");
 
         }else{
@@ -40,18 +47,29 @@ public class KakuroPrograAnalisis {
                 if(num+j < meta & k+1 != cantidad & estaNumero(lista,j) == false | num+j == meta & k+1 == cantidad & estaNumero(lista,j) == false){
                     /*System.out.println(lista);
                     System.out.println(k);*/
-                    lista.set(k, j);
-                    generar(num+j,cantidad,k+1,meta,i+1,lista,listaFinal);
+                    lista[k] = j;
+                    generar(num+j,cantidad,k+1,meta,i+1,lista,listaFinal,contador);
                 }
             }
         }
     }
-    public static boolean estaNumero(ArrayList<Integer> lista, int numero){
-        for(int i = 0; i<lista.size() ;i++){
-            if(lista.get(i) == numero){
+    public static boolean estaNumero(int[] lista, int numero){
+        for(int i = 0; i<lista.length ;i++){
+            if(lista[i] == numero){
                 return true;
             }
         }
         return false;
+    }
+    public static int[] vectorConversion(int[] vector){
+        int a,b;
+        b = vector.length;
+        int[] nuevoVector = new  int[b];
+        for(int i = 0; i<vector.length; i++){
+            a = vector[i];
+            nuevoVector[i] = a;
+        }
+  
+        return nuevoVector;
     }
 }
