@@ -19,23 +19,25 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        int[]lista = new int[3];
-        lista[0] = 0;
-        lista[1] = 0;
-        lista[2] = 0;
+        
+        
+        
+    }
+    public static ArrayList<int[]>  backtrackNumeros(int numero,int casillas){
+        int[]lista = new int[casillas];
+        for(int i = 0; i<lista.length;i++){
+            lista[i] = 0;
+        }
         ArrayList<int[]> listaFinal = new ArrayList<>();
         int contador = 0;
         //ArrayList<int[]> listaFinal = new ArrayList<>();
-        generar(0,3,0,8,1,lista,listaFinal,contador);
-        for(int i = 0; i< listaFinal.size();i++){
-            System.out.println(Arrays.toString(listaFinal.get(i)));
-        }
-        
+        generar(0,casillas,0,numero,1,lista,listaFinal,contador);
+        return listaFinal;
     }
     public static void generar(int num,int cantidad,int k,int meta,int i,int[] lista,ArrayList<int[]> listaFinal,int contador){
         if(lista.length == cantidad & k == cantidad && num == meta){
             //System.out.println(Arrays.toString(lista));
-            listaFinal.add(vectorConversion(lista));
+            listaFinal.add((int[])lista.clone());
             lista[k-1] = 0;
             //System.out.println(Arrays.toString(listaFinal.get(contador)));
             contador++;
@@ -61,15 +63,5 @@ public class KakuroPrograAnalisis {
         }
         return false;
     }
-    public static int[] vectorConversion(int[] vector){
-        int a,b;
-        b = vector.length;
-        int[] nuevoVector = new  int[b];
-        for(int i = 0; i<vector.length; i++){
-            a = vector[i];
-            nuevoVector[i] = a;
-        }
   
-        return nuevoVector;
-    }
 }
