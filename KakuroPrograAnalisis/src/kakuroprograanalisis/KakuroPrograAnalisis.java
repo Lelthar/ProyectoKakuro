@@ -20,8 +20,7 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here   
-        //Verga, no se actualiza
-        
+        System.out.println("Que hago?");
     }
     
   
