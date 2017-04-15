@@ -20,12 +20,7 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here   
-        for(int i = 0; i<20;i++){
-            Random rnd = new Random();
-            int n = 45;
-            int numero =  (int) (rnd.nextDouble() * (n-1) + 6);
-            System.out.println(numero);
-        }
+        //Verga, no se actualiza
         
     }
     
