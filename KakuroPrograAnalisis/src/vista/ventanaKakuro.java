@@ -24,14 +24,55 @@ public class ventanaKakuro extends javax.swing.JFrame {
     Casilla[][] tableroLogico = new Casilla[DIMENSIONES][DIMENSIONES]; //Es el tablero logico de tipo Casilla
     ArrayList<Integer> listaHorizontales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir horizontal
     ArrayList<Integer> listaVerticales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir vertical
+    ArrayList<ArrayList> listaSolucionesHorizontales = new ArrayList<>();
+    ArrayList<ArrayList> listaSolucionesVerticales = new ArrayList<>();
     
     public ventanaKakuro() {
         initComponents();
         generarNumerosPrincipales(10); //Le indica cuantos numeros van a tener entre las dos listas de numeros principales
-        for(int i = 0;i<listaVerticales.size();i++){
-            System.out.println(listaVerticales.get(i));
-        }
+        generarSolucionesNumeros(5); //Genera las soluciones posibles para los numeros en las listas
+        
         generarTableroLabelsJuego(10, 40);
+    }
+  
+    public void generarSolucionesNumeros(int largo){
+        for(int i = 0 ; i<largo;i++){
+            if(listaHorizontales.get(i)<=9 && listaHorizontales.get(i)>=6){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 3));
+            }else if(listaHorizontales.get(i)<=14 && listaHorizontales.get(i) >= 10){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 4));
+            }else if(listaHorizontales.get(i)<=20 && listaHorizontales.get(i) >= 15){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 5));
+            }else if(listaHorizontales.get(i)<=27 && listaHorizontales.get(i) >= 21){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 6));
+            }else if(listaHorizontales.get(i)<=35 && listaHorizontales.get(i) >= 28){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 7));
+            }else if(listaHorizontales.get(i)<=44 && listaHorizontales.get(i) >= 36){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 8));
+            }else if(listaHorizontales.get(i) >= 45){
+                listaSolucionesHorizontales.add(backtrackNumeros(listaHorizontales.get(i), 9));
+            }
+            
+        }
+   
+        for(int i = 0 ; i<largo;i++){
+            if(listaVerticales.get(i)<=9 && listaVerticales.get(i)>=6){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 3));
+            }else if(listaVerticales.get(i)<=14 && listaVerticales.get(i) >= 10){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 4));
+            }else if(listaVerticales.get(i)<=20 && listaVerticales.get(i) >= 15){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 5));
+            }else if(listaVerticales.get(i)<=27 && listaVerticales.get(i) >= 21){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 6));
+            }else if(listaVerticales.get(i)<=35 && listaVerticales.get(i) >= 28){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 7));
+            }else if(listaVerticales.get(i)<=44 && listaVerticales.get(i) >= 36){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 8));
+            }else if(listaVerticales.get(i) >= 45){
+                listaSolucionesVerticales.add(backtrackNumeros(listaVerticales.get(i), 9));
+            }
+            
+        }
     }
     public void generarNumerosPrincipales(int cantidad){ //Genera la lista principal de numeros que van a estar en el tablero
         for(int i = 0 ; i<cantidad;){

@@ -20,7 +20,8 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here   
-
+        Random rnd = new Random();
+        int numero =  (int)(rnd.nextDouble() *  10);
     }
     
   
