@@ -41,6 +41,23 @@ public class ventanaKakuro extends javax.swing.JFrame {
             System.out.println(tableroLogico[1][i].getNumero());
         }
     }
+    public int[] solucionBuena(ArrayList<int[]> listaSoluciones, ArrayList<Integer> listaPosiciones,ArrayList<Integer> listaNumeros){
+        ArrayList<int[]> listaSolucionesTemp = (ArrayList<int[]>)listaSoluciones.clone();
+        ArrayList<int[]> lista = new ArrayList<>();
+        for(int i = 0; i<listaPosiciones.size();i++){
+            for(int j = 0; j <listaSolucionesTemp.size() ;j++){
+                if(listaSolucionesTemp.get(j)[listaPosiciones.get(i)] == listaNumeros.get(i)){
+                    lista.add(listaSolucionesTemp.get(j));
+                }
+            }
+            listaSolucionesTemp = (ArrayList<int[]>)lista.clone();
+            lista.clear();
+        }
+        if(listaSolucionesTemp.size() == 0){
+            return listaSoluciones.get(0);
+        }else
+            return listaSolucionesTemp.get(0);
+    }
     public void inicializarTableroLogico(){
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
@@ -89,8 +106,8 @@ public class ventanaKakuro extends javax.swing.JFrame {
             Random rnd = new Random();
             int numero2 =  (int) (rnd.nextDouble() * listaSolucionesHorizontales.get(i).size());
             int[] solucionTemp = (int[])listaSolucionesHorizontales.get(i).get(numero2).clone();
-            System.out.println("Largo: ");
-            System.out.println(solucionTemp.length);
+            //System.out.println("Largo: ");
+            //System.out.println(solucionTemp.length);
             int numeroNuevo = contador+1;
             int contador2 = 0;
             for(int k = numeroNuevo; k < solucionTemp.length+1; k++){
@@ -104,59 +121,82 @@ public class ventanaKakuro extends javax.swing.JFrame {
             int largoMaximo = 13-(casillas+1);
             int numero = 0;
             boolean solucion = false;
+            int contadorTemp = 13;
                    
             for(int l = 13; l > 0;l--){
-                for(int j = 0;j<largoMaximo;j++){
-                    if(solucion){
-                        break;
-                    }else if(tableroLogico[j][l].getNumero() == 0 && tableroLogico[j][l-1].getNumero() == 0 && !listaColocadosVerticales.contains(l) && !solucion){
-                        if(l != 13 && tableroLogico[j][l+1].numero == 0){
+                    int j = 0;
+                    if(tableroLogico[j][l].getNumero() == 0 && tableroLogico[j][l-1].getNumero() == 0 && !listaColocadosVerticales.contains(l) && !solucion){
+                        if(l != 13 && tableroLogico[j][l+1].numero == 0 && tableroLogico[j][l-1].getNumero() == 0){
                             //System.out.println("Aqui");
-                            tableroLogico[j][l].setNumero(listaVerticales.get(i));
-                            tableroLogico[j][l].setPrincipal(true);
-                            tableroLogico[j][l].setOrientacion('H');
-                            solucion = true;
-                            listaColocadosVerticales.add(l);
-                            numero = j;
-                            contador = l;
-                            break;
-                        }else{
-                            /*//System.out.println("Aqui");
                             tableroLogico[j][l].setNumero(listaVerticales.get(i));
                             tableroLogico[j][l].setPrincipal(true);
                             tableroLogico[j][l].setOrientacion('V');
                             solucion = true;
                             listaColocadosVerticales.add(l);
-                            //System.out.println("Aqui");
                             numero = j;
                             contador = l;
-                            break;*/
+                            break;
                         }
                     }
+                
+            }
+            
+            Random rnd = new Random();
+            int posicionSolucion =  (int) (rnd.nextDouble() * listaSolucionesVerticales.get(i).size());
+            int[] solucionTemp = (int[])listaSolucionesVerticales.get(i).get(posicionSolucion).clone();
+            
+            int largoLista = listaSolucionesVerticales.get(i).get(0).length;
+            int numero2 = numero+1;
+            int contador2 = contador;
+            if(verEspaciosLibres(numero2,contador2,largoLista)){
+                System.out.println();
+                for(int k = 0;k<largoLista;k++){
+                    System.out.println("Aca1");
+                    tableroLogico[numero2][contador2].setNumero(solucionTemp[k]);
+                    System.out.println("Aca2");
+                    numero2++;
+                }
+            }else{
+                ArrayList<int[]> solucionesNumero = (ArrayList<int[]>)listaSolucionesVerticales.get(i).clone();
+                ArrayList<Integer> listaPosiciones = new ArrayList<>();
+                ArrayList<Integer> listaNumeros = new ArrayList<>();
+                for(int k = 0; k < largoLista; k++){
+                    if(tableroLogico[numero2][contador2].getNumero() != 0){
+                        listaPosiciones.add(k);
+                        listaNumeros.add(tableroLogico[numero2][contador2].getNumero());
+                        numero2++;
+                    }
+                }
+                int[] solucionLista = solucionBuena(solucionesNumero, listaPosiciones, listaNumeros);
+                int x = numero +1;
+                int y = contador;
+                for(int f = 0; f < largoLista; f++){
+                    tableroLogico[x][y].setNumero(solucionLista[f]);
+                    x++;
                 }
             }
-            Random rnd = new Random();
+            /*Random rnd = new Random();
             int numero2 =  (int) (rnd.nextDouble() * listaSolucionesVerticales.get(i).size());
             int[] solucionTemp = (int[])listaSolucionesVerticales.get(i).get(numero2).clone();
-            System.out.println("Largo: ");
-            System.out.println(solucionTemp.length);
             int numeroNuevo = numero+1;
             int contador2 = 0;
             for(int k = numeroNuevo; k < solucionTemp.length+1; k++){
                 tableroLogico[k][contador].setNumero(solucionTemp[contador2]);
                 contador2++;
-            }
+            }*/
+            //solucionBuena(listaSolucionesVerticales.get(i),)
+            
         }
     
     }
-    public int[] solucionCorrecta(int posicion,int numero,int numeroSolucion){
-        ArrayList<int[]> solucionTemp = (ArrayList<int[]>)listaSolucionesVerticales.get(numeroSolucion);
-        for(int i = 0; i<solucionTemp.size();i++){
-            if(solucionTemp.get(i)[posicion] == numero){
-                return solucionTemp.get(i);
-            }
+    public boolean verEspaciosLibres(int x,int y,int cantidad){
+        for(int i = 0;i<cantidad;i++){
+            if(tableroLogico[x][y].numero != 0){
+                return false;
+            }else
+                x++;
         }
-        return solucionTemp.get(0);
+        return true;
     }
     public int cantidadCasillas(int numero){
         if(numero <= 9 && numero >=6 ){
