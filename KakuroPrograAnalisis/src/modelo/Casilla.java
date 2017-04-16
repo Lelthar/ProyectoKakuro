@@ -10,10 +10,17 @@ package modelo;
  * @author gerald
  */
 public class Casilla {
-    int numero;
-    char orientacion; //Puede ser H o V, de Horizontal y Vertical
-    boolean principal; //Dice si es la primer casilla que contiene el numero a formar
-    int cantidadCasillas;
+    public int numero;
+    public char orientacion; //Puede ser H o V, de Horizontal y Vertical
+    public boolean principal; //Dice si es la primer casilla que contiene el numero a formar
+    public int cantidadCasillas;
+
+    public Casilla() {
+    }
+
+    public Casilla(int numero) {
+        this.numero = numero;
+    }
 
     public Casilla(int pNumero, char pOrientacion,boolean pPrincipal) {
         this.numero = pNumero;
