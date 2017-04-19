@@ -14,6 +14,7 @@ public class Casilla {
     public char orientacion; //Puede ser H o V, de Horizontal y Vertical
     public boolean principal; //Dice si es la primer casilla que contiene el numero a formar
     public int cantidadCasillas;
+    public boolean casillaFinal = false;
 
     public Casilla() {
     }
@@ -26,6 +27,14 @@ public class Casilla {
         this.numero = pNumero;
         this.orientacion = pOrientacion;
         this.principal = pPrincipal;
+    }
+
+    public boolean isCasillaFinal() {
+        return casillaFinal;
+    }
+
+    public void setCasillaFinal(boolean casillaFinal) {
+        this.casillaFinal = casillaFinal;
     }
 
     public int getNumero() {

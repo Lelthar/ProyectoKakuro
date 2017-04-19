@@ -20,13 +20,47 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here   
-        //backtrackNumeros(7,3);
+        /*for(int i= 6; i < 46; i++){
+            if(i >=6 && i<=9){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,3);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i >= 10 && i<=14){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,4);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i >= 15 && i<=20){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,5);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i >= 21 && i<=27){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,6);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i >= 28 && i<=35){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,7);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i >= 36 && i<=44){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,8);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }else if(i == 45){
+                ArrayList<int[]> nuevo = backtrackNumeros(i,9);
+                System.out.println("El numero: "+Integer.toString(i));
+                System.out.println("Tiene numero de soluciones: "+Integer.toString(nuevo.size()));
+                System.out.println("----------------------------------------------------");
+            }
+        }*/
+        ArrayList<int[]> nuevo = backtrackNumeros(33,7);
        int[][] numero = new int[3][3];
-       numero[2][1] = 5;
-       numero[2][2] = 3; 
-       for(int i = 0; i<numero.length;i++){
-               System.out.println(numero[2][i]);
-       }
+        System.out.println(nuevo.size());
         
         
         
@@ -43,7 +77,7 @@ public class KakuroPrograAnalisis {
         return listaFinal;
     }
     public static void generar(int num,int cantidad,int k,int meta,int i,int[] lista,ArrayList<int[]> listaFinal,int contador){
-        if(lista.length == cantidad & k == cantidad && num == meta){
+        if(lista.length == cantidad & k == cantidad && num == meta && !listaFinal.contains(lista)){
             System.out.println(Arrays.toString(lista));
             listaFinal.add((int[])lista.clone());
             lista[k-1] = 0;
