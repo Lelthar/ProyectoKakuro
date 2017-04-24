@@ -32,13 +32,9 @@ public class ventanaKakuro extends javax.swing.JFrame {
     
     public ventanaKakuro() {
         initComponents();
-        //generarNumerosPrincipales(10); //Le indica cuantos numeros van a tener entre las dos listas de numeros principales
-        //generarSolucionesNumeros(5); //Genera las soluciones posibles para los numeros en las listas
         inicializarTableroLogico();
-       // generarTableroLogicoJuego();
-       // insertarNegativos();
-        //slimpiarTablero();
         generarTableroLogicoJuego();
+        //imprimirMatriz();
         generarTableroLabelsJuego(10, 40);
         //imprimirMatriz();
         
@@ -83,6 +79,9 @@ public class ventanaKakuro extends javax.swing.JFrame {
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
                 tableroLogico[i][j] = new Casilla(0);
+                tableroLogico[i][j].orientacion = "";
+                tableroLogico[i][j].principal = false;
+                tableroLogico[i][j].principal2 = false;
             }
         }
     }
@@ -105,7 +104,7 @@ public class ventanaKakuro extends javax.swing.JFrame {
     public boolean ponerVertical(int cantidad,int x,int y){
         int contador = 0;
         while(contador != cantidad){
-            if(tableroLogico[x][y].principal){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2){
                 return false;
             }else{
                 x++;
@@ -114,12 +113,26 @@ public class ventanaKakuro extends javax.swing.JFrame {
         }
         return true;
     }
+    public boolean libreColumna(int x, int y){
+        while(y >= 0){
+            if(tableroLogico[x][y].principal == true && tableroLogico[x][y].orientacion == "H"){
+                return false;
+            }else if(tableroLogico[x][y].principal2 == true && tableroLogico[x][y].orientacion == "H"){
+                return true;
+            }else{
+                y--;
+            }
+        }
+        return true;
+    }
     public void generarTableroLogicoJuego(){
+        
         //Random rnd = new Random();
         //int horizontales =  (int) (rnd.nextDouble() * 4 + 8);
-        int horizontales = 11;
+        int horizontales = 10;
+        int contadorIteracionesHorizontales = 0;
         ArrayList<Integer> camposHorizontalesUsados = new ArrayList<>();
-        for(int i = 0; i < horizontales; i++){
+        for(int i = 0; i < horizontales;){
             Random rnd1 = new Random();
             int cantidadCasillas =  (int) (rnd1.nextDouble() * 7 + 3);
             int numeroColocar = generarNumeroRandom(cantidadCasillas);
@@ -134,38 +147,47 @@ public class ventanaKakuro extends javax.swing.JFrame {
                 }
             }
             Random numeroRandomY = new Random();
-            int y =  (int)(numeroRandomY.nextDouble() * (14 - cantidadCasillas));
+            int y =  (int)(numeroRandomY.nextDouble() * (14 - cantidadCasillas - 1));
             //System.out.println("X: "+Integer.toString(x)+" Y: "+Integer.toString(y));
             tableroLogico[x][y].setNumero(numeroColocar);
             //System.out.println("Se arregĺó");
             tableroLogico[x][y].setPrincipal(true);
             tableroLogico[x][y].cantidadCasillas = cantidadCasillas;
             tableroLogico[x][y].setOrientacion("H");
+            if(contadorIteracionesHorizontales == 25000){
+                System.out.println("....");
+                contadorIteracionesHorizontales = 0;
+                inicializarTableroLogico();
+                generarTableroLogicoJuego();
+                break;
+            }
+            contadorIteracionesHorizontales++;
             ArrayList<int[]> listaSoluciones = backtrackNumeros(numeroColocar,cantidadCasillas,x,y+1,0);
             Random solucionRandom = new Random();
             int posicionSolucion =  (int)(solucionRandom.nextDouble() * listaSoluciones.size());
-            /*System.out.println("Numero: "+Integer.toString(numeroColocar));
-            System.out.println("Casillas: "+Integer.toString(cantidadCasillas));
-            System.out.println(listaSoluciones.size());**/
+            if(listaSoluciones.size() == 0){
+                
+            }else{
             int[] solucionUsar = listaSoluciones.get(posicionSolucion);
             int y2 = y+1;
+            //System.out.println(y2);
+            //System.out.println(cantidadCasillas);
             for(int j = 0; j < cantidadCasillas; j++){
-                if(j+1 == cantidadCasillas){
-                    tableroLogico[x][y2].setNumero(solucionUsar[j]);
-                    tableroLogico[x][y2].setCasillaFinal(true);
-                    tableroLogico[x][y2].orientacion = "H";
-                }else{
-                    tableroLogico[x][y2].setNumero(solucionUsar[j]);
-                    y2++;
-                }
-                
+                tableroLogico[x][y2].setNumero(solucionUsar[j]);
+                y2++;   
             }
-            
+            //System.out.println(y2);
+            tableroLogico[x][y2].setNumero(numeroColocar);
+            tableroLogico[x][y2].principal2 = true;
+            tableroLogico[x][y2].orientacion = "H";
+            i++;
+            }
         }
-        
+        //imprimirMatriz();
         //Random randomVerticales = new Random();
         //int verticales =  (int) (randomVerticales.nextDouble() * 4 + 8);
         int verticales = 10;
+        int contadorIteraciones = 0;
         ArrayList<Integer> camposVerticalesUsados = new ArrayList<>();
         for(int i = 0; i < verticales;){
             int posicionX;
@@ -185,14 +207,23 @@ public class ventanaKakuro extends javax.swing.JFrame {
                     }
                 }
                 Random numeroRandomX = new Random();
-                int x =  (int)(numeroRandomX.nextDouble() * (14 - cantidadCasillas));
-                if(tableroLogico[x][y].getNumero() == 0 && ponerVertical(cantidadCasillas,x,y)){
+                int x =  (int)(numeroRandomX.nextDouble() * (14 - cantidadCasillas -1));
+                if(tableroLogico[x][y].getNumero() == 0 && ponerVertical(cantidadCasillas+1,x+1,y) && libreColumna(x+cantidadCasillas+1, y)){
                     posicionX = x;
                     posicionY = y;
                     casillasNumero = cantidadCasillas;
                     break;
                 }
             }
+            //System.out.println(contadorIteraciones);
+            if(contadorIteraciones == 25000){
+                System.out.println("...");
+                contadorIteraciones = 0;
+                inicializarTableroLogico();
+                generarTableroLogicoJuego();
+                break;
+            }
+            contadorIteraciones++;
             int numeroColocar = generarNumeroRandom(casillasNumero);
             ArrayList<int[]> listaSoluciones = backtrackNumeros(numeroColocar,casillasNumero,posicionX+1,posicionY,1);
             if(!listaSoluciones.isEmpty()){
@@ -207,15 +238,13 @@ public class ventanaKakuro extends javax.swing.JFrame {
                 tableroLogico[posicionX][posicionY].orientacion = "V";
                
                 for(int j = 0; j < casillasNumero; j++){
-                    if(j+1 == casillasNumero){
-                        tableroLogico[posicionX2][posicionY].setNumero(solucionUsar[j]);
-                        tableroLogico[posicionX2][posicionY].setCasillaFinal(true);
-                        tableroLogico[posicionX2][posicionY].orientacion = "V";
-                    }else{
-                        tableroLogico[posicionX2][posicionY].setNumero(solucionUsar[j]);
-                        posicionX2++;
-                    }
+                    tableroLogico[posicionX2][posicionY].setNumero(solucionUsar[j]);
+                    posicionX2++;
+                    
                 }
+                tableroLogico[posicionX2][posicionY].setNumero(numeroColocar);
+                tableroLogico[posicionX2][posicionY].principal2 = true;
+                tableroLogico[posicionX2][posicionY].orientacion = "V";
                 i++;
             }
         }
@@ -310,38 +339,29 @@ public class ventanaKakuro extends javax.swing.JFrame {
                         tableroLabels1[i][j] = new JTextField();
                         panelJuego.add(tableroLabels1[i][j]);
                         tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
-                        tableroLabels1[i][j].setBackground(Color.LIGHT_GRAY);
+                        tableroLabels1[i][j].setBackground(Color.BLACK);
                     }
-                }else if(tableroLogico[i][j].getNumero() != 0 && !tableroLogico[i][j].principal){
-                    if(tableroLogico[i][j].casillaFinal){
-                        if(tableroLogico[i][j].getOrientacion() == "H"){
+                }else if(tableroLogico[i][j].getNumero() != 0 && tableroLogico[i][j].principal2 == false && !tableroLogico[i][j].principal){
+                            tableroLabels1[i][j] = new JTextField();
+                            panelJuego.add(tableroLabels1[i][j]);
+                            tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
+                            tableroLabels1[i][j].setBackground(Color.LIGHT_GRAY);
+                            tableroLabels1[i][j].setText((Integer.toString(tableroLogico[i][j].getNumero())));
+                       
+                    //tableroLabels1[i][j].setEditable(false);
+                }else if(tableroLogico[i][j].getNumero() != 0 && tableroLogico[i][j].principal2 == true){
                             tableroLabels1[i][j] = new JTextField();
                             panelJuego.add(tableroLabels1[i][j]);
                             tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
                             tableroLabels1[i][j].setBackground(Color.GRAY);
                             tableroLabels1[i][j].setText((Integer.toString(tableroLogico[i][j].getNumero())+"/"));
-                        }else{
-                            tableroLabels1[i][j] = new JTextField();
-                            panelJuego.add(tableroLabels1[i][j]);
-                            tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
-                            tableroLabels1[i][j].setBackground(Color.GRAY);
-                            tableroLabels1[i][j].setText(Integer.toString(tableroLogico[i][j].getNumero())+"/");
-                        }
-                        
-                    }else{
-                        tableroLabels1[i][j] = new JTextField();
-                        panelJuego.add(tableroLabels1[i][j]);
-                        tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
-                        tableroLabels1[i][j].setBackground(Color.GRAY);
-                        tableroLabels1[i][j].setText(Integer.toString(tableroLogico[i][j].getNumero()));
-                    }
-                    
+                       
                     //tableroLabels1[i][j].setEditable(false);
                 }else{
                     tableroLabels1[i][j] = new JTextField();
                     panelJuego.add(tableroLabels1[i][j]);
                     tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
-                    tableroLabels1[i][j].setBackground(Color.LIGHT_GRAY);
+                    tableroLabels1[i][j].setBackground(Color.GRAY);
                     tableroLabels1[i][j].setText("/"+Integer.toString(tableroLogico[i][j].getNumero()));
                     tableroLabels1[i][j].setEditable(false);
                 }

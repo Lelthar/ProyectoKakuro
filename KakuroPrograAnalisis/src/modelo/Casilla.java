@@ -12,7 +12,8 @@ package modelo;
 public class Casilla {
     public int numero;
     public String orientacion; //Puede ser H o V, de Horizontal y Vertical
-    public boolean principal; //Dice si es la primer casilla que contiene el numero a formar
+    public boolean principal = false; //Dice si es la primer casilla que contiene el numero a formar
+    public boolean principal2 = false;
     public int cantidadCasillas;
     public boolean casillaFinal = false;
 
