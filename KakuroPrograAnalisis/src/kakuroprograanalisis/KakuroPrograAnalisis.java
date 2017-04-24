@@ -8,6 +8,7 @@ package kakuroprograanalisis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import modelo.Casilla;
 
 /**
  *
@@ -58,41 +59,39 @@ public class KakuroPrograAnalisis {
                 System.out.println("----------------------------------------------------");
             }
         }*/
-        ArrayList<int[]> nuevo = backtrackNumeros(33,7);
-       int[][] numero = new int[3][3];
-        System.out.println(nuevo.size());
-        
+        //ArrayList<int[]> nuevo = backtrackNumeros(33,7);
+       //int[][] numero = new int[3][3];
+        //System.out.println(nuevo.size());
+        /*Random rnd = new Random();
+        int numero =  (int) (rnd.nextDouble() * 5 + 10);
+        System.out.println(numero);*/
+        Random rnd1 = new Random();
+        int cantidadCasillas =  (int) (rnd1.nextDouble() * 7 + 3);
+        System.out.println(cantidadCasillas);
         
         
     }
     public static ArrayList<int[]>  backtrackNumeros(int numero,int casillas){
         int[]lista = new int[casillas];
-        for(int i = 0; i<lista.length;i++){
-            lista[i] = 0;
-        }
         ArrayList<int[]> listaFinal = new ArrayList<>();
-        int contador = 0;
-        //ArrayList<int[]> listaFinal = new ArrayList<>();
-        generar(0,casillas,0,numero,1,lista,listaFinal,contador);
+        generar(0,casillas,0,numero,lista,listaFinal);
         return listaFinal;
     }
-    public static void generar(int num,int cantidad,int k,int meta,int i,int[] lista,ArrayList<int[]> listaFinal,int contador){
-        if(lista.length == cantidad & k == cantidad && num == meta && !listaFinal.contains(lista)){
-            System.out.println(Arrays.toString(lista));
+    public static void generar(int num,int cantidad,int k,int meta,int[] lista,ArrayList<int[]> listaFinal){
+        if(k == cantidad){
+            //System.out.println(Arrays.toString(lista));
             listaFinal.add((int[])lista.clone());
-            lista[k-1] = 0;
             //System.out.println(Arrays.toString(listaFinal.get(contador)));
-            contador++;
-        }else if(lista.length == cantidad & k == cantidad){
-            System.out.println("No hay");
-
+            
         }else{
             for(int j = 1; j<10; j++){
-                if(num+j < meta & k+1 != cantidad & estaNumero(lista,j) == false | num+j == meta & k+1 == cantidad & estaNumero(lista,j) == false){
-                    /*System.out.println(lista);
-                    System.out.println(k);*/
+                lista[k] = 0;
+                for(int p = k; p<lista.length; p++){
+                    lista[p] = 0;
+                }
+                if(num+j < meta && k+1 != cantidad && estaNumero(lista,j) == false || num+j == meta && k+1 == cantidad && estaNumero(lista,j) == false){    
                     lista[k] = j;
-                    generar(num+j,cantidad,k+1,meta,i+1,lista,listaFinal,contador);
+                    generar(num+j,cantidad,k+1,meta,lista,listaFinal);
                 }
             }
         }

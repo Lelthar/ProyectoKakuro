@@ -11,7 +11,7 @@ package modelo;
  */
 public class Casilla {
     public int numero;
-    public char orientacion; //Puede ser H o V, de Horizontal y Vertical
+    public String orientacion; //Puede ser H o V, de Horizontal y Vertical
     public boolean principal; //Dice si es la primer casilla que contiene el numero a formar
     public int cantidadCasillas;
     public boolean casillaFinal = false;
@@ -23,7 +23,7 @@ public class Casilla {
         this.numero = numero;
     }
 
-    public Casilla(int pNumero, char pOrientacion,boolean pPrincipal) {
+    public Casilla(int pNumero, String pOrientacion,boolean pPrincipal) {
         this.numero = pNumero;
         this.orientacion = pOrientacion;
         this.principal = pPrincipal;
@@ -45,11 +45,11 @@ public class Casilla {
         this.numero = numero;
     }
 
-    public char getOrientacion() {
+    public String getOrientacion() {
         return orientacion;
     }
 
-    public void setOrientacion(char orientacion) {
+    public void setOrientacion(String orientacion) {
         this.orientacion = orientacion;
     }
 
