@@ -6,8 +6,11 @@
 package vista;
 
 import java.awt.Color;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,9 +28,10 @@ import modelo.MatrizGuardar;
  *
  * @author gerald
  */
-public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
+public class ventanaKakuro extends javax.swing.JFrame {
 
     public VentanaGuardar ventana = new VentanaGuardar(this);
+    public VetanaCargar ventanaCargar;
     public static int DIMENSIONES = 14;
     // Tablero con objetos JTextField
     public JTextField[][] tableroLabels1 = new JTextField[DIMENSIONES][DIMENSIONES]; //Es el tablero de JTextField
@@ -39,22 +43,43 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
     public ArrayList<MatrizGuardar> listaMatrices = new ArrayList<>();
     public int pruebaIteraciones = 0;
     public int numero = 0;
+    public boolean generar = true;
+    public boolean cargar = true;
     
     public ventanaKakuro() {
         initComponents();
-        //ventana.dispose();
+        read_file();
+        numero = (listaMatrices.size());
+        ventanaCargar = new VetanaCargar(this);
+        /*//ventana.dispose();
         inicializarTableroLogico();
         generarTableroLogicoJuego();
-        imprimirMatriz(tableroLogico);
+        //imprimirMatriz(tableroLogico);
         insertarNegativos();
         limpiarTablero();
         limpiarNegativos();
+        
         listaPrincipales = OrdenamientoBurbujaArrayList(listaPrincipales);
         generarTableroLabelsJuego(10, 40);
         //llenarPrincipales();
         //llenarPrincipales();
         //solucionesPrincipales();
+        //System.out.println(listaMatrices.size());*/
         
+    }
+    public void generarTableroNuevo(){
+        if(generar){
+            inicializarTableroLogico();
+            generarTableroLogicoJuego();
+            insertarNegativos();
+            limpiarTablero();
+            limpiarNegativos();
+            //read_file();
+            listaPrincipales = OrdenamientoBurbujaArrayList(listaPrincipales);
+            generarTableroLabelsJuego(10, 40);
+            generar = false;
+            cargar = false;
+        }
     }
     public void insertarNegativos(){
         for(int i = 0;i<14;i++){
@@ -781,8 +806,8 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
     }
     public void guardarFile(){
         try{
-            FileOutputStream fos = new FileOutputStream("listaMatrices.ser");
-            ObjectOutputStream out = new ObjectOutputStream(fos);
+            FileOutputStream fileOut =  new FileOutputStream("listaMatrices.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(listaMatrices);
             out.close();
             System.out.println("File listo");
@@ -790,6 +815,31 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
             Logger.getLogger(ventanaKakuro.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Hubo un error");
         }
+    }
+    public void read_file() {
+        
+        try {
+            FileInputStream fileIn;
+            fileIn = new FileInputStream("listaMatrices.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            listaMatrices = (ArrayList<MatrizGuardar>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ventanaKakuro.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ventanaKakuro.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ventanaKakuro.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    public void cargarMatrizNumero(int pNumero){
+        tableroLogico = listaMatrices.get(pNumero).getMatriz();
+        listaPrincipales = OrdenamientoBurbujaArrayList(listaPrincipales);
+        generarTableroLabelsJuego(10, 40);
+        cargar = false;
+        generar = false;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -804,6 +854,8 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
         jLabel1 = new javax.swing.JLabel();
         btnResolver = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
+        btnGenerar = new javax.swing.JButton();
+        btnCargar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Kakuro\n");
@@ -827,19 +879,37 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
             }
         });
 
+        btnGenerar.setText("Generar");
+        btnGenerar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarActionPerformed(evt);
+            }
+        });
+
+        btnCargar.setText("Cargar");
+        btnCargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCargarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelJuegoLayout = new javax.swing.GroupLayout(panelJuego);
         panelJuego.setLayout(panelJuegoLayout);
         panelJuegoLayout.setHorizontalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJuegoLayout.createSequentialGroup()
-                .addGap(182, 666, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJuegoLayout.createSequentialGroup()
+            .addGroup(panelJuegoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnGuardar)
-                .addGap(18, 18, 18)
-                .addComponent(btnResolver)
-                .addGap(117, 117, 117))
+                .addGroup(panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJuegoLayout.createSequentialGroup()
+                        .addComponent(btnCargar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnGenerar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnGuardar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnResolver)
+                        .addGap(117, 117, 117))))
         );
         panelJuegoLayout.setVerticalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -847,7 +917,9 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
                 .addGap(49, 49, 49)
                 .addGroup(panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnResolver)
-                    .addComponent(btnGuardar))
+                    .addComponent(btnGuardar)
+                    .addComponent(btnGenerar)
+                    .addComponent(btnCargar))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(170, Short.MAX_VALUE))
@@ -898,6 +970,16 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
         ventana.setVisible(true);
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarActionPerformed
+        // TODO add your handling code here:
+        generarTableroNuevo();
+    }//GEN-LAST:event_btnGenerarActionPerformed
+
+    private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
+        // TODO add your handling code here:
+        ventanaCargar.setVisible(true);
+    }//GEN-LAST:event_btnCargarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -934,6 +1016,8 @@ public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCargar;
+    private javax.swing.JButton btnGenerar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnResolver;
     private javax.swing.JLabel jLabel1;

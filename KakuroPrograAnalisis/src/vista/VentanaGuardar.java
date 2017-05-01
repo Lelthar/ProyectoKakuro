@@ -91,9 +91,12 @@ public class VentanaGuardar extends javax.swing.JFrame {
        this.nombre = txtfNombre.getText();
        MatrizGuardar nuevo = new MatrizGuardar(ventana.tableroLogico,ventana.numero,nombre);
        ventana.listaMatrices.add(nuevo);
-       ventana.numero++;
+       ventana.numero = ventana.listaMatrices.size();
         System.out.println("Matriz guardada");
         ventana.guardarFile();
+        ventana.read_file();
+        ventana.ventanaCargar.cargarLista();
+        
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**

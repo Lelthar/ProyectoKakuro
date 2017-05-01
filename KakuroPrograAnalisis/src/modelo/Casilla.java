@@ -5,11 +5,13 @@
  */
 package modelo;
 
+import java.io.Serializable;
+
 /**
  *
  * @author gerald
  */
-public class Casilla {
+public class Casilla implements Serializable{
     public int numero = 0;
     public String orientacion = ""; //Puede ser H o V, de Horizontal y Vertical
     public boolean principal = false; //Dice si es la primer casilla que contiene el numero a formar
