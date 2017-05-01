@@ -6,33 +6,43 @@
 package vista;
 
 import java.awt.Color;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextField;
 import modelo.Casilla;
 import modelo.CasillaPrincipal;
 import modelo.HiloBacktrack;
+import modelo.MatrizGuardar;
 
 /**
  *
  * @author gerald
  */
-public class ventanaKakuro extends javax.swing.JFrame {
+public class ventanaKakuro extends javax.swing.JFrame implements Serializable{
 
-  
+    public VentanaGuardar ventana = new VentanaGuardar(this);
     public static int DIMENSIONES = 14;
     // Tablero con objetos JTextField
-    JTextField[][] tableroLabels1 = new JTextField[DIMENSIONES][DIMENSIONES]; //Es el tablero de JTextField
-    static Casilla[][] tableroLogico = new Casilla[DIMENSIONES][DIMENSIONES]; //Es el tablero logico de tipo Casilla
-    ArrayList<Integer> listaHorizontales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir horizontal
-    ArrayList<Integer> listaVerticales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir vertical
-    ArrayList<ArrayList<int[]>> listaSolucionesPrincipales = new ArrayList<>();
-    ArrayList<CasillaPrincipal> listaPrincipales = new ArrayList<CasillaPrincipal>();
-    int pruebaIteraciones = 0;
+    public JTextField[][] tableroLabels1 = new JTextField[DIMENSIONES][DIMENSIONES]; //Es el tablero de JTextField
+    public static Casilla[][] tableroLogico = new Casilla[DIMENSIONES][DIMENSIONES]; //Es el tablero logico de tipo Casilla
+    public ArrayList<Integer> listaHorizontales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir horizontal
+    public ArrayList<Integer> listaVerticales = new ArrayList<>(); //Contiene la lista de los numeros que van a ir vertical
+    public ArrayList<ArrayList<int[]>> listaSolucionesPrincipales = new ArrayList<>();
+    public ArrayList<CasillaPrincipal> listaPrincipales = new ArrayList<CasillaPrincipal>();
+    public ArrayList<MatrizGuardar> listaMatrices = new ArrayList<>();
+    public int pruebaIteraciones = 0;
+    public int numero = 0;
     
     public ventanaKakuro() {
         initComponents();
+        //ventana.dispose();
         inicializarTableroLogico();
         generarTableroLogicoJuego();
         imprimirMatriz(tableroLogico);
@@ -769,7 +779,18 @@ public class ventanaKakuro extends javax.swing.JFrame {
             }
         }
     }
-    
+    public void guardarFile(){
+        try{
+            FileOutputStream fos = new FileOutputStream("listaMatrices.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fos);
+            out.writeObject(listaMatrices);
+            out.close();
+            System.out.println("File listo");
+        }catch (IOException ex) {
+            Logger.getLogger(ventanaKakuro.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Hubo un error");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -782,6 +803,7 @@ public class ventanaKakuro extends javax.swing.JFrame {
         panelJuego = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnResolver = new javax.swing.JButton();
+        btnGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Kakuro\n");
@@ -798,15 +820,24 @@ public class ventanaKakuro extends javax.swing.JFrame {
             }
         });
 
+        btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelJuegoLayout = new javax.swing.GroupLayout(panelJuego);
         panelJuego.setLayout(panelJuegoLayout);
         panelJuegoLayout.setHorizontalGroup(
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJuegoLayout.createSequentialGroup()
-                .addGap(0, 666, Short.MAX_VALUE)
+                .addGap(182, 666, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelJuegoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGuardar)
+                .addGap(18, 18, 18)
                 .addComponent(btnResolver)
                 .addGap(117, 117, 117))
         );
@@ -814,7 +845,9 @@ public class ventanaKakuro extends javax.swing.JFrame {
             panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelJuegoLayout.createSequentialGroup()
                 .addGap(49, 49, 49)
-                .addComponent(btnResolver)
+                .addGroup(panelJuegoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnResolver)
+                    .addComponent(btnGuardar))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(170, Short.MAX_VALUE))
@@ -852,13 +885,18 @@ public class ventanaKakuro extends javax.swing.JFrame {
         }
         Casilla[][] matrizLogica2 = new Casilla[14][14];
         System.out.println(listaPrincipales.get(0).numero);
-        for(int i = 0; i < listaSoluciones1.size(); i++){
+        //for(int i = 0; i < listaSoluciones1.size(); i++){
             matrizLogica2 = clonarMatriz(matrizLogica);
-            matrizLogica2 = llenarTableroMatriz(listaPrincipales.get(0).x,listaPrincipales.get(0).y,listaSoluciones1.get(i),listaPrincipales.get(0).orientacion,matrizLogica2);
+            matrizLogica2 = llenarTableroMatriz(listaPrincipales.get(0).x,listaPrincipales.get(0).y,listaSoluciones1.get(0),listaPrincipales.get(0).orientacion,matrizLogica2);
             HiloBacktrack hilo1 = new HiloBacktrack(matrizLogica2,listaPrincipales);
             hilo1.start();
-        }
+        //}
     }//GEN-LAST:event_btnResolverActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        ventana.setVisible(true);
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -896,6 +934,7 @@ public class ventanaKakuro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnResolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel panelJuego;

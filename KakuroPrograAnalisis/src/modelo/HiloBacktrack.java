@@ -79,50 +79,26 @@ public class HiloBacktrack extends Thread{
         return solucionesMatriz;
     }
     public void generarSolucionKakuro(int contador,Casilla[][] matriz, ArrayList<Casilla[][]> soluciones, int largo){
-        /*System.out.println("---------------");
-        System.out.println(soluciones.size());
-        System.out.println(contador);*/
         if(contador == largo){
             soluciones.add(clonarMatriz(matriz));
             return;
         }else{
-            /*for(int k = contador; k < listaPrincipales.size(); k++){
-                limpiarCeros(listaPrincipales.get(k).x, listaPrincipales.get(k).y, listaPrincipales.get(k).orientacion, listaPrincipales.get(k).casillas, matriz);
-            }*/
             ArrayList<int[]>  listaSoluciones = new ArrayList<>();
             if(listaPrincipales.get(contador).orientacion == 0){
                 listaSoluciones = bactrackFinal(listaPrincipales.get(contador).numero,listaPrincipales.get(contador).casillas,listaPrincipales.get(contador).x,listaPrincipales.get(contador).y+1,listaPrincipales.get(contador).orientacion,matriz);
             }else{
                 listaSoluciones = bactrackFinal(listaPrincipales.get(contador).numero,listaPrincipales.get(contador).casillas,listaPrincipales.get(contador).x+1,listaPrincipales.get(contador).y,listaPrincipales.get(contador).orientacion,matriz);
             }
-            //System.out.println(largoSoluciones);
             if(listaSoluciones.size() != 0 ){
                 //System.out.println("s");
                 Casilla[][] nuevaMatriz = clonarMatriz(matriz);
                 for(int i = 0; i < listaSoluciones.size(); i++){
-                    //System.out.println("Entra");
                     matriz = (Casilla[][]) clonarMatriz(nuevaMatriz);
-                    //System.out.println(Arrays.toString(listaSoluciones.get(i)));
                     matriz = llenarTableroMatriz(listaPrincipales.get(contador).x,listaPrincipales.get(contador).y,listaSoluciones.get(i),listaPrincipales.get(contador).orientacion,matriz);
-                    //Casilla[][] nuevaMatriz = clonarMatriz(matriz);
-                    //imprimirMatriz(matriz);
                     generarSolucionKakuro(contador+1,matriz,soluciones,largo);
                 }
             }
-            /*int largoSoluciones = listaSolucionesPrincipales.get(contador).size();
-            Casilla[][] nuevaMatriz = clonarMatriz(matriz);
-            for(int i = 0; i<largoSoluciones; i++){
-                matriz = clonarMatriz(nuevaMatriz);
-                if(sirveSolucion(matriz,listaSolucionesPrincipales.get(contador).get(i),listaPrincipales.get(contador).x,listaPrincipales.get(contador).y,listaPrincipales.get(contador).orientacion)){
-                    matriz = llenarTableroMatriz(listaPrincipales.get(contador).x,listaPrincipales.get(contador).y,largoSoluciones.get(contador).get(i),listaPrincipales.get(contador).orientacion,matriz);
-                    //Casilla[][] nuevaMatriz = clonarMatriz(matriz);
-                    //imprimirMatriz(nuevaMatriz);
-                    imprimirMatriz(matriz);
-                    generarSolucionKakuro(contador+1,matriz,soluciones,largo);
-                }
-            }*/
-            
-            
+
         }
     }
     public Casilla[][] llenarTableroMatriz(int x,int y,int[] lista, int orientacion,Casilla[][] matriz){
@@ -142,4 +118,16 @@ public class HiloBacktrack extends Thread{
             return matriz;
         }
     }
+    /*int largoSoluciones = listaSolucionesPrincipales.get(contador).size();
+            Casilla[][] nuevaMatriz = clonarMatriz(matriz);
+            for(int i = 0; i<largoSoluciones; i++){
+                matriz = clonarMatriz(nuevaMatriz);
+                if(sirveSolucion(matriz,listaSolucionesPrincipales.get(contador).get(i),listaPrincipales.get(contador).x,listaPrincipales.get(contador).y,listaPrincipales.get(contador).orientacion)){
+                    matriz = llenarTableroMatriz(listaPrincipales.get(contador).x,listaPrincipales.get(contador).y,largoSoluciones.get(contador).get(i),listaPrincipales.get(contador).orientacion,matriz);
+                    //Casilla[][] nuevaMatriz = clonarMatriz(matriz);
+                    //imprimirMatriz(nuevaMatriz);
+                    imprimirMatriz(matriz);
+                    generarSolucionKakuro(contador+1,matriz,soluciones,largo);
+                }
+            }*/
 }
