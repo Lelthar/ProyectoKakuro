@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JTextField;
 import modelo.Casilla;
 import modelo.CasillaPrincipal;
@@ -48,9 +49,9 @@ public class ventanaKakuro extends javax.swing.JFrame {
     
     public ventanaKakuro() {
         initComponents();
-        read_file();
-        numero = (listaMatrices.size());
-        ventanaCargar = new VetanaCargar(this);
+        //read_file();
+        //numero = (listaMatrices.size());
+        //ventanaCargar = new VetanaCargar(this);
         /*//ventana.dispose();
         inicializarTableroLogico();
         generarTableroLogicoJuego();
@@ -70,8 +71,11 @@ public class ventanaKakuro extends javax.swing.JFrame {
     public void generarTableroNuevo(){
         if(generar){
             inicializarTableroLogico();
-            generarTableroLogicoJuego();
+            generarTableroLogicoJuego(26);
             insertarNegativos();
+            generarTableroLlenar();
+            //System.out.println("Pasó");
+            //imprimirMatriz(tableroLogico);
             limpiarTablero();
             limpiarNegativos();
             //read_file();
@@ -79,12 +83,13 @@ public class ventanaKakuro extends javax.swing.JFrame {
             generarTableroLabelsJuego(10, 40);
             generar = false;
             cargar = false;
+            
         }
     }
     public void insertarNegativos(){
         for(int i = 0;i<14;i++){
             for(int j = 0; j<14 ;j++){
-                if(tableroLogico[i][j].getNumero() == 0){
+                if(tableroLogico[i][j].getNumero() == 0 && tableroLogico[i][j].getNumero2() == 0){
                     tableroLogico[i][j].setNumero(-1);
                     tableroLogico[i][j].negativo = true;
                 }
@@ -120,34 +125,25 @@ public class ventanaKakuro extends javax.swing.JFrame {
     public void limpiarTablero(){
         for(int i = 0;i<14;i++){
             for(int j = 0; j<14 ;j++){
-                if(tableroLogico[i][j].getNumero() != -1 && tableroLogico[i][j].principal2 == false){
-                    if(tableroLogico[i][j].principal == false){
-                        tableroLogico[i][j].setNumero(0);
-                    }
+                if(tableroLogico[i][j].getNumero() != -1 && tableroLogico[i][j].principal2 == false && tableroLogico[i][j].principal == false){
+                    tableroLogico[i][j].setNumero(0);
+                    tableroLogico[i][j].setNumero2(0);
                 }
             }
         }
     }
     public Casilla[][] clonarMatriz(Casilla[][] matriz){
         Casilla[][] nuevo = new Casilla[matriz.length][matriz.length];
-        for(int i = 0; i < 14; i++){
-            for(int j = 0; j < 14; j++){
-                nuevo[i][j] = new Casilla(0);
-                nuevo[i][j].orientacion = "";
-                nuevo[i][j].principal = false;
-                nuevo[i][j].principal2 = false;
-                nuevo[i][j].negativo = false;
-                nuevo[i][j].cantidadCasillas = 0;
-                
-            }
-        }
+
         for(int i = 0; i < matriz.length; i++){
             for(int j = 0; j < matriz.length; j++){
+                nuevo[i][j] = new Casilla();
+                nuevo[i][j].numero2 = matriz[i][j].numero2;
                 nuevo[i][j].numero = matriz[i][j].numero;
-                nuevo[i][j].orientacion = matriz[i][j].orientacion;
                 nuevo[i][j].principal = matriz[i][j].principal;
                 nuevo[i][j].principal2 = matriz[i][j].principal2;
                 nuevo[i][j].cantidadCasillas = matriz[i][j].cantidadCasillas;
+                nuevo[i][j].cantidadCasillas2 = matriz[i][j].cantidadCasillas2;
                 nuevo[i][j].casillaFinal = matriz[i][j].casillaFinal;
                 nuevo[i][j].negativo = matriz[i][j].negativo;
             }
@@ -157,20 +153,32 @@ public class ventanaKakuro extends javax.swing.JFrame {
     public void inicializarTableroLogico(){
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                tableroLogico[i][j] = new Casilla(0);
-                tableroLogico[i][j].orientacion = "";
-                tableroLogico[i][j].principal = false;
-                tableroLogico[i][j].principal2 = false;
-                tableroLogico[i][j].negativo = false;
-                tableroLogico[i][j].cantidadCasillas = 0;
-                
+                tableroLogico[i][j] = new Casilla();
+                tableroLogico[i][j].numero = 0; //Es el numero de las casillas en horizontal
+                tableroLogico[i][j].numero2 = 0; //Es el numero de las casillas en vertical
+                tableroLogico[i][j].principal = false; //Dice si se está usando un numero en horizontal
+                tableroLogico[i][j].principal2 = false; //Dice si se está usando un numero en vertical 
+                tableroLogico[i][j].cantidadCasillas = 0; // La cantidad de casillas horizontales
+                tableroLogico[i][j].cantidadCasillas2 = 0; //La cantidad de casillas verticales
+                tableroLogico[i][j].casillaFinal = false; // Indice si es la ultima casilla de la suma de un numero
+                tableroLogico[i][j].negativo = false; // Es para limpiar la matriz, no es necesarios
             }
         }
     }
     public void imprimirMatriz(Casilla[][] matriz){
         for(int i = 0;i<14;i++){
             for(int j = 0; j<14 ;j++){
-                System.out.print(Integer.toString(matriz[i][j].getNumero())+" ");
+                if(matriz[i][j].getNumero() == 0 && matriz[i][j].getNumero2() == 0){
+                    System.out.print(Integer.toString(0)+","+Integer.toString(0)+"|");
+                }else if(matriz[i][j].getNumero() != 0 && matriz[i][j].getNumero2() != 0){
+                    System.out.print(Integer.toString(matriz[i][j].getNumero())+","+Integer.toString(matriz[i][j].getNumero2())+"|");
+                }else if(matriz[i][j].getNumero() == 0 && matriz[i][j].getNumero2() != 0){
+                    System.out.print(Integer.toString(0)+","+Integer.toString(matriz[i][j].getNumero2())+"|");
+                }else{
+                    System.out.print(Integer.toString(matriz[i][j].getNumero())+","+Integer.toString(0)+"|");
+                }
+                    
+                
             }
             System.out.println("");
         }
@@ -180,10 +188,43 @@ public class ventanaKakuro extends javax.swing.JFrame {
             listaSolucionesPrincipales.add(backtrackSoluciones(listaPrincipales.get(i).numero,listaPrincipales.get(i).casillas));
         }
     }
+    
+    /*
+     *Arreglar este metodo por el atributio de horizontal que fue borrado
+     *
+    */
+    public boolean libreColumna(int x, int y){
+        while(y >= 0){
+            if(tableroLogico[x][y].principal == true /*&& tableroLogico[x][y].orientacion == "H"*/){
+                return false;
+            }else if(tableroLogico[x][y].principal2 == true /* && tableroLogico[x][y].orientacion == "H" */){
+                return false;
+            }else{
+                y--;
+            }
+        }
+        return true;
+    }
+    /*Revisa si en vertical desde las coordenadas que le den, está libre para poner la casilla principal o principal2
+     De entrada recibe la cantidad de casillas que tiene el numero a colocar, y X y Y son las coordenadas donde está el numero
+    */
     public boolean ponerVertical(int cantidad,int x,int y){
         int contador = 0;
+        x++;
         while(contador != cantidad){
-            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2){
+            //System.out.println(contador);
+            if(contador + 1 == cantidad && x != 13){
+                if(tableroLogico[x+1][y].numero != 0 && !tableroLogico[x+1][y].principal && !tableroLogico[x+1][y].principal2){
+                    return false;
+                }else if(tableroLogico[x][y-1].casillaFinal == true){
+                    return false;
+                }else{
+                    x++;
+                    contador++;
+                }
+            }else if(tableroLogico[x][y].principal == true || tableroLogico[x][y].principal2 == true){
+                return false;
+            }else if(tableroLogico[x][y-1].casillaFinal == true){
                 return false;
             }else{
                 x++;
@@ -192,153 +233,307 @@ public class ventanaKakuro extends javax.swing.JFrame {
         }
         return true;
     }
-    public boolean libreColumna(int x, int y){
-        while(y >= 0){
-            if(tableroLogico[x][y].principal == true && tableroLogico[x][y].orientacion == "H"){
+    /*Revisa si en horizontal desde las coordenadas que le den, está libre para poner la casilla principal o principal2
+     De entrada recibe la cantidad de casillas que tiene el numero a colocar, y X y Y son las coordenadas donde está el numero
+    */
+    public boolean ponerHorizontal(int cantidad,int x,int y){
+        int contador = 0;
+        y++;
+        while(contador != cantidad){
+            if(tableroLogico[x][y].principal){
                 return false;
-            }else if(tableroLogico[x][y].principal2 == true && tableroLogico[x][y].orientacion == "H"){
-                return true;
-            }else{
-                y--;
+            }else if(tableroLogico[x][y].principal2){
+                return false;
+            }else if(tableroLogico[x][y].numero != 0){
+                return false;
+            }
+            else{
+                y++;
+                contador++;
             }
         }
         return true;
     }
-    public void generarTableroLogicoJuego(){
+    public void generarTableroLogicoJuego(int cantidadFilas){
         
-        //Random rnd = new Random();
-        //int horizontales =  (int) (rnd.nextDouble() * 4 + 8);
-        int horizontales = 10;
+        int horizontales = cantidadFilas;
         int contadorIteracionesHorizontales = 0;
-        ArrayList<Integer> camposHorizontalesUsados = new ArrayList<>();
+        ArrayList<Integer> camposHorizontalesUsados1 = new ArrayList<>();
+        ArrayList<Integer> camposVerticalesUsados1 = new ArrayList<>();
+        boolean solucionEncontrada1 = false;
         for(int i = 0; i < horizontales;){
-            Random rnd1 = new Random();
-            int cantidadCasillas =  (int) (rnd1.nextDouble() * 7 + 3);
-            int numeroColocar = generarNumeroRandom(cantidadCasillas);
+            int numeroColocar = 0;
+            int cantidadCasillas = 0;
             int x = 0;
+            int y = 0;
+            
             while(true){
+                contadorIteracionesHorizontales++;
+                if(contadorIteracionesHorizontales == 100000){
+                    //System.out.println("...1");
+                    inicializarTableroLogico();
+                    generarTableroLogicoJuego(cantidadFilas);
+                    solucionEncontrada1 = true;
+                    break;
+                }
+                Random rnd1 = new Random();
+                cantidadCasillas =  (int) (rnd1.nextDouble() * 6 + 2);
+                numeroColocar = generarNumeroRandom(cantidadCasillas);
+                Random numeroRandomY = new Random();
                 Random numeroRandom = new Random();
+                int posicionY =  (int)(numeroRandomY.nextDouble() * (14 - cantidadCasillas ));
                 int posicionX =  (int)(numeroRandom.nextDouble() * 13 + 1);
-                if(!camposHorizontalesUsados.contains(posicionX)){
-                    camposHorizontalesUsados.add(posicionX);
+                //Compara si el X y Y ya no se pusieron, y tambien que si con esa posicion va a servir para llenar la matriz
+                if(tableroLogico[posicionX][posicionY].numero == 0 && ponerHorizontal(cantidadCasillas,posicionX,posicionY)){ 
+                    camposHorizontalesUsados1.add(posicionX);
+                    camposVerticalesUsados1.add(posicionY);
                     x = posicionX;
+                    y = posicionY;
                     break;
                 }
             }
-            Random numeroRandomY = new Random();
-            int y =  (int)(numeroRandomY.nextDouble() * (14 - cantidadCasillas - 1));
-            //System.out.println("X: "+Integer.toString(x)+" Y: "+Integer.toString(y));
-            tableroLogico[x][y].setNumero(numeroColocar);
-            //System.out.println("Se arregĺó");
-            tableroLogico[x][y].setPrincipal(true);
-            tableroLogico[x][y].cantidadCasillas = cantidadCasillas;
-            tableroLogico[x][y].setOrientacion("H");
-            CasillaPrincipal nuevo = new CasillaPrincipal(x,y,cantidadCasillas,0,numeroColocar);
-            listaPrincipales.add(nuevo);
-            if(contadorIteracionesHorizontales == 25000){
-                System.out.println("....");
-                contadorIteracionesHorizontales = 0;
-                inicializarTableroLogico();
-                listaPrincipales.clear();
-                generarTableroLogicoJuego();
+ 
+            
+            //CasillaPrincipal nuevo = new CasillaPrincipal(x,y,cantidadCasillas,0,numeroColocar);
+            //listaPrincipales.add(nuevo);
+            if(solucionEncontrada1){
                 break;
             }
-            contadorIteracionesHorizontales++;
             ArrayList<int[]> listaSoluciones = backtrackNumeros(numeroColocar,cantidadCasillas,x,y+1,0);
             Random solucionRandom = new Random();
             int posicionSolucion =  (int)(solucionRandom.nextDouble() * listaSoluciones.size());
-            if(listaSoluciones.size() == 0){
-                
-            }else{
-            int[] solucionUsar = listaSoluciones.get(posicionSolucion);
-            int y2 = y+1;
-            //System.out.println(y2);
-            //System.out.println(cantidadCasillas);
-            for(int j = 0; j < cantidadCasillas; j++){
-                tableroLogico[x][y2].setNumero(solucionUsar[j]);
-                y2++;   
-            }
-            //System.out.println(y2);
-            tableroLogico[x][y2].setNumero(numeroColocar);
-            tableroLogico[x][y2].principal2 = true;
-            tableroLogico[x][y2].orientacion = "H";
-            i++;
-            }
-        }
-        //imprimirMatriz();
-        //Random randomVerticales = new Random();
-        //int verticales =  (int) (randomVerticales.nextDouble() * 4 + 8);
-        int verticales = 10;
-        int contadorIteraciones = 0;
-        ArrayList<Integer> camposVerticalesUsados = new ArrayList<>();
-        for(int i = 0; i < verticales;){
-            int posicionX;
-            int posicionY;
-            int casillasNumero;
-            while(true){
-                Random rnd1 = new Random();
-                int cantidadCasillas =  (int) (rnd1.nextDouble() * 7 + 3);
-                int y = 0;
-                while(true){
-                    Random numeroRandom = new Random();
-                    int y2 =  (int)(numeroRandom.nextDouble() * 13 + 1);
-                    if(!camposVerticalesUsados.contains(y2)){
-                        //camposHorizontalesUsados.add(posicionX);
-                        y = y2;
-                        break;
+            if(listaSoluciones.size() != 0){
+                tableroLogico[x][y].setNumero(numeroColocar); //Settea el numero para las horizontales
+                tableroLogico[x][y].setPrincipal(true); //Settea que hay un numero en horizontale en esa casilla
+                tableroLogico[x][y].setCantidadCasillas(cantidadCasillas); //Settea la cantidad de casillas para el numero horizontal 
+            
+                int[] solucionUsar = listaSoluciones.get(posicionSolucion);
+                int y2 = y+1;
+
+                for(int j = 0; j < cantidadCasillas; j++){
+                    if(j+1 == cantidadCasillas){
+                        tableroLogico[x][y2].setNumero(solucionUsar[j]);
+                        tableroLogico[x][y2].setCasillaFinal(true);
+                    }else{
+                        tableroLogico[x][y2].setNumero(solucionUsar[j]);
+                        y2++; 
                     }
                 }
-                Random numeroRandomX = new Random();
-                int x =  (int)(numeroRandomX.nextDouble() * (14 - cantidadCasillas -1));
-                if(tableroLogico[x][y].getNumero() == 0 && ponerVertical(cantidadCasillas+1,x+1,y) && libreColumna(x+cantidadCasillas+1, y)){
-                    posicionX = x;
-                    posicionY = y;
-                    casillasNumero = cantidadCasillas;
-                    break;
-                }
-            }
-            //System.out.println(contadorIteraciones);
-            if(contadorIteraciones == 25000){
-                System.out.println("...");
-                contadorIteraciones = 0;
-                inicializarTableroLogico();
-                listaPrincipales.clear();
-                generarTableroLogicoJuego();
-                break;
-            }
-            contadorIteraciones++;
-            int numeroColocar = generarNumeroRandom(casillasNumero);
-            ArrayList<int[]> listaSoluciones = backtrackNumeros(numeroColocar,casillasNumero,posicionX+1,posicionY,1);
-            if(!listaSoluciones.isEmpty()){
-                Random solucionRandom = new Random();
-                int posicionSolucion =  (int)(solucionRandom.nextDouble() * listaSoluciones.size());
-                int[] solucionUsar = listaSoluciones.get(posicionSolucion);
-                int posicionX2 = posicionX+1;
-                camposVerticalesUsados.add(posicionY);
-                tableroLogico[posicionX][posicionY].setNumero(numeroColocar);
-                tableroLogico[posicionX][posicionY].cantidadCasillas = casillasNumero;
-                tableroLogico[posicionX][posicionY].setPrincipal(true);
-                tableroLogico[posicionX][posicionY].orientacion = "V";
-                CasillaPrincipal nuevo = new CasillaPrincipal(posicionX,posicionY,casillasNumero,1,numeroColocar);
-                listaPrincipales.add(nuevo);
-               
-                for(int j = 0; j < casillasNumero; j++){
-                    tableroLogico[posicionX2][posicionY].setNumero(solucionUsar[j]);
-                    posicionX2++;
-                    
-                }
-                tableroLogico[posicionX2][posicionY].setNumero(numeroColocar);
-                tableroLogico[posicionX2][posicionY].principal2 = true;
-                tableroLogico[posicionX2][posicionY].orientacion = "V";
                 i++;
             }
         }
         
+        int verticales = 12;
+        int contadorIteraciones = 0;
+        ArrayList<Integer> camposHorizontalesUsados2 = new ArrayList<>();
+        ArrayList<Integer> camposVerticalesUsados2 = new ArrayList<>();
+        int contadorIteraciones2 = 0;
+        boolean solucionEncontrada = false;
+        for(int i = 0; i < verticales;){
+            int numeroColocar = 0;
+            int cantidadCasillas = 0;
+            int x = 0;
+            int y = 0;
+      
+            while(true){
+                contadorIteraciones2++;
+                if(contadorIteraciones2 == 1000000){
+                    //System.out.println("...");
+                    inicializarTableroLogico();
+                    generarTableroLogicoJuego(cantidadFilas);
+                    solucionEncontrada = true;
+                    break;
+                }
+                Random rnd1 = new Random();
+                cantidadCasillas =  (int) (rnd1.nextDouble() * 8 + 2);
+                numeroColocar = generarNumeroRandom(cantidadCasillas);
+                Random numeroRandomY = new Random();
+                Random numeroRandom = new Random();
+                int posicionX =  (int)(numeroRandomY.nextDouble() * (14 - cantidadCasillas));
+                int posicionY =  (int)(numeroRandom.nextDouble() * 13 + 1);
+
+                //Compara si el X y Y ya no se pusieron, y tambien que si con esa posicion va a servir para llenar la matriz
+                if(tableroLogico[posicionX][posicionY].numero == 0 && tableroLogico[posicionX][posicionY].principal2 == false && ponerVertical(cantidadCasillas,posicionX,posicionY)){ 
+                    x = posicionX;
+                    y = posicionY;
+                    break;
+                }else if(tableroLogico[posicionX][posicionY].principal2 == false && tableroLogico[posicionX][posicionY].principal == true && ponerVertical(cantidadCasillas,posicionX,posicionY)){
+                    x = posicionX;
+                    y = posicionY;
+                    break;
+                }
+            }
+            if(solucionEncontrada){
+                break;
+            }
+
+            //CasillaPrincipal nuevo = new CasillaPrincipal(x,y,cantidadCasillas,0,numeroColocar);
+            //listaPrincipales.add(nuevo);
+           
+            ArrayList<int[]> listaSoluciones = backtrackNumeros(numeroColocar,cantidadCasillas,x+1,y,1);
+            Random solucionRandom = new Random();
+            int posicionSolucion =  (int)(solucionRandom.nextDouble() * listaSoluciones.size());
+            if(listaSoluciones.size() != 0){
+                if(i+1 == verticales){
+                    System.out.println(contadorIteraciones2);
+                }
+                tableroLogico[x][y].setNumero2(numeroColocar); //Settea el numero para las horizontales
+                tableroLogico[x][y].setPrincipal2(true); //Settea que hay un numero en horizontale en esa casilla
+                tableroLogico[x][y].setCantidadCasillas2(cantidadCasillas);//Settea la cantidad de casillas para el numero horizontal 
+                int[] solucionUsar = listaSoluciones.get(posicionSolucion);
+                int x2 = x+1;
+                //System.out.println(y2);
+                //System.out.println(cantidadCasillas);
+                for(int j = 0; j < cantidadCasillas; j++){
+                    if(j+1 == cantidadCasillas){
+                        tableroLogico[x2][y].setNumero(solucionUsar[j]);
+                        tableroLogico[x2][y].setCasillaFinal(true);
+                    }else{
+                        tableroLogico[x2][y].setNumero(solucionUsar[j]);
+                        x2++; 
+                    }
+                }
+                i++;
+            }
+        
+        }
+        
     
     }
-   
+    //Llena los cuadros en negro que puedan sumar como un numero
+    public void generarTableroLlenar(){
+        for(int i = 0; i < 14; i++){
+            for(int j = 0; j < 14; j++){
+                if(tableroLogico[i][j].negativo){
+                    if(revisarHorizontal(i,j)){
+                        tableroLogico[i][j].setNumero(cantidadRellenarHorizontales(i,j));
+                        tableroLogico[i][j].setPrincipal(true);
+                        tableroLogico[i][j].negativo = false;
+                        tableroLogico[i][j].cantidadCasillas = largoCasillasHorizontales(i,j);
+                        if(tableroLogico[i][j].numero2 == -1){
+                            tableroLogico[i][j].setNumero2(0);
+                        }
+                    }
+                    if(revisarVerticales(i,j)){
+                        tableroLogico[i][j].setNumero2(cantidadRellenarVerticales(i,j));
+                        tableroLogico[i][j].setPrincipal2(true);
+                        tableroLogico[i][j].negativo = false;
+                        tableroLogico[i][j].cantidadCasillas2 = largoCasillasVerticales(i,j);
+                        if(tableroLogico[i][j].numero == -1){
+                            tableroLogico[i][j].setNumero(0);
+                        }
+                    }
+                }
+            }
+        }
+    
+    }
+    //Revisa si en la casilla negra en la que está, revisa si tiene para llenar 2 o mas cuadros en blanco y retorna true si eso se cumple
+    public boolean  revisarHorizontal(int x, int y){
+        y++;
+        int contador = 0;
+        while(y != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador++;
+                y++;
+            }
+        }
+        if(contador > 1){ //Revisa si hay mas de una casilla que llenar
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    /*
+     *Retorna el numero que va horizontales
+     *
+     */
+    public int cantidadRellenarHorizontales(int x, int y){
+        y++;
+        int contador = 0;
+        while(y != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador += tableroLogico[x][y].getNumero();
+                y++;
+            }
+        }
+        return contador; 
+    }
+    //Retorna la cantidad de casillas que se van a relllenar
+    public int largoCasillasHorizontales(int x, int y){
+        y++;
+        int contador = 0;
+        while(y != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador++;
+                y++;
+            }
+        }
+        return contador; 
+    }
+    //Retorna la cantidad de casillas que se van a relllenar
+    public int largoCasillasVerticales(int x, int y){
+        x++;
+        int contador = 0;
+        while(x != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador++;
+                x++;
+            }
+        }
+        return contador; 
+    }
+    /*
+     *Retorna el numero que va verticalmente
+     *
+     */
+    public int cantidadRellenarVerticales(int x, int y){
+        x++;
+        int contador = 0;
+        while(x != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador += tableroLogico[x][y].getNumero();
+                x++;
+            }
+        }
+        return contador; 
+    }
+    //Revisa si en la casilla negra en la que está, revisa si tiene para llenar 2 o mas cuadros en blanco y retorna true si eso se cumple
+    public boolean  revisarVerticales(int x, int y){
+        x++;
+        int contador = 0;
+        while(x != 14){
+            if(tableroLogico[x][y].principal || tableroLogico[x][y].principal2 || tableroLogico[x][y].negativo){ //Compara que sea un casilla principal o cuadro negro
+                break;
+            }else{
+                contador++;
+                x++;
+            }
+        }
+        if(contador > 1){ //Revisa si hay mas de una casilla que llenar
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
     public int generarNumeroRandom(int largo){
-        if(largo == 3){
+        if(largo == 2){
+            Random rnd = new Random();
+            int numero =  (int) (rnd.nextDouble() * 3 + 3);
+            return numero;
+        }else if(largo == 3){
             Random rnd = new Random();
             int numero =  (int) (rnd.nextDouble() * 4 + 6);
             return numero;
@@ -363,13 +558,12 @@ public class ventanaKakuro extends javax.swing.JFrame {
             int numero =  (int) (rnd.nextDouble() * 8 + 36);
             return numero;
         }else{
+            //System.out.println(largo);
             return 45;
         }
     }
       
-            
-            
-        
+   
     public int cantidadCasillas(int numero){
         if(numero <= 9 && numero >=6 ){
             return 3;
@@ -391,33 +585,39 @@ public class ventanaKakuro extends javax.swing.JFrame {
     public void generarTableroLabelsJuego(int posicionx,int posiciony){
         for(int i = 0; i < DIMENSIONES; i++){
             for(int j = 0; j < DIMENSIONES; j++){
-                //System.out.println("Aca me caigo");
-                if(tableroLogico[i][j].getNumero() == 0 && !tableroLogico[i][j].negativo){ // Arreglar, es para pruebas nada mas
+                if(tableroLogico[i][j].getNumero() == 0 && !tableroLogico[i][j].negativo && !tableroLogico[i][j].principal2){ //Muestra las casillas blancas para rellenar
                     tableroLabels1[i][j] = new JTextField();
                     panelJuego.add(tableroLabels1[i][j]);
                     tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
                     tableroLabels1[i][j].setBackground(Color.LIGHT_GRAY);
-                }else if(tableroLogico[i][j].getNumero() == 0 && tableroLogico[i][j].negativo ){
+                }else if(tableroLogico[i][j].negativo == true){ //Muestra las casillas en negro
                     tableroLabels1[i][j] = new JTextField();
                     panelJuego.add(tableroLabels1[i][j]);
                     tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
                     tableroLabels1[i][j].setBackground(Color.BLACK);
                     tableroLabels1[i][j].setText((Integer.toString(tableroLogico[i][j].getNumero())));
-                    tableroLabels1[i][j].setEditable(false);
-                }else if(tableroLogico[i][j].getNumero() != 0 && tableroLogico[i][j].principal2 == true){
+                    //tableroLabels1[i][j].setEditable(false);
+                }else if(tableroLogico[i][j].principal2 == true && tableroLogico[i][j].principal == true){ //Muestra las casillas principal y principal2
                     tableroLabels1[i][j] = new JTextField();
                     panelJuego.add(tableroLabels1[i][j]);
                     tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
                     tableroLabels1[i][j].setBackground(Color.GRAY);
-                    tableroLabels1[i][j].setText((Integer.toString(tableroLogico[i][j].getNumero())+"/"));
-                    tableroLabels1[i][j].setEditable(false);
-                }else{
+                    tableroLabels1[i][j].setText(Integer.toString(tableroLogico[i][j].getNumero())+" \\ "+(Integer.toString(tableroLogico[i][j].getNumero2())));
+                    //tableroLabels1[i][j].setEditable(false);
+                }else if(tableroLogico[i][j].principal2 == true){ //Muestra las casillas verticales principales
                     tableroLabels1[i][j] = new JTextField();
                     panelJuego.add(tableroLabels1[i][j]);
                     tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
                     tableroLabels1[i][j].setBackground(Color.GRAY);
-                    tableroLabels1[i][j].setText("/"+Integer.toString(tableroLogico[i][j].getNumero()));
-                    tableroLabels1[i][j].setEditable(false);
+                    tableroLabels1[i][j].setText("\\"+Integer.toString(tableroLogico[i][j].getNumero2()));
+                    
+                }else if(tableroLogico[i][j].principal == true){ //Muestra las casillas horizontales principales
+                    tableroLabels1[i][j] = new JTextField();
+                    panelJuego.add(tableroLabels1[i][j]);
+                    tableroLabels1[i][j].setBounds(posicionx+40*i, posiciony+40*j, 40, 40);
+                    tableroLabels1[i][j].setBackground(Color.GRAY);
+                    tableroLabels1[i][j].setText(Integer.toString(tableroLogico[i][j].getNumero())+"\\");
+                    //tableroLabels1[i][j].setEditable(false);
                 }
                 
             } 
@@ -479,7 +679,6 @@ public class ventanaKakuro extends javax.swing.JFrame {
     }
     public static void generar(int num,int cantidad,int k,int meta,int[] lista,ArrayList<int[]> listaFinal,int x, int y,int orientacion){
         if(k == cantidad){
-            //System.out.println("Entre");
             listaFinal.add((int[])lista.clone());
         }else{
             for(int j = 1; j<10; j++){
@@ -538,11 +737,14 @@ public class ventanaKakuro extends javax.swing.JFrame {
             }
         }
     }
+    /*
+        Arreglar este metodo, por la eliminacion del atributo de orientacion
     
+    */
     public void llenarPrincipales(){ //Mete a la lista de principales que están en la matriz logica
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                if(tableroLogico[i][j].principal && tableroLogico[i][j].orientacion == "H"){
+                if(tableroLogico[i][j].principal /*&& tableroLogico[i][j].orientacion == "H"*/){
                     int orientacion = 0;
                     CasillaPrincipal nuevo = new CasillaPrincipal(i,j,tableroLogico[i][j].cantidadCasillas,orientacion,tableroLogico[i][j].numero);
                     listaPrincipales.add(nuevo);
@@ -551,7 +753,7 @@ public class ventanaKakuro extends javax.swing.JFrame {
         }
         for(int i = 0; i < 14; i++){
             for(int j = 0; j < 14; j++){
-                if(tableroLogico[i][j].principal && tableroLogico[i][j].orientacion == "V"){
+                if(tableroLogico[i][j].principal /*&& tableroLogico[i][j].orientacion == "V"*/){
                     int orientacion = 1;
                     CasillaPrincipal nuevo = new CasillaPrincipal(i,j,tableroLogico[i][j].cantidadCasillas,orientacion,tableroLogico[i][j].numero);
                     listaPrincipales.add(nuevo);
@@ -559,12 +761,15 @@ public class ventanaKakuro extends javax.swing.JFrame {
             }
         }
     }
+    /*
+        No arregar, porque no sirve para nada
+    */
     public Casilla[][] limpiarCeros(int x, int y, int orientacion, int largo, Casilla[][] matriz){
         if(orientacion == 0){
             y++;
             for(int i = 0; i < largo; i++){
                 matriz[x][y].numero = 0;
-                matriz[x][y].orientacion = "";
+                //matriz[x][y].orientacion = "";
                 matriz[x][y].principal = false;
                 matriz[x][y].principal2 = false;
                 matriz[x][y].negativo = false;
@@ -576,7 +781,7 @@ public class ventanaKakuro extends javax.swing.JFrame {
             x++;
             for(int i = 0; i < largo; i++){
                 matriz[x][y].numero = 0;
-                matriz[x][y].orientacion = "";
+                //matriz[x][y].orientacion = "";
                 matriz[x][y].principal = false;
                 matriz[x][y].principal2 = false;
                 matriz[x][y].negativo = false;

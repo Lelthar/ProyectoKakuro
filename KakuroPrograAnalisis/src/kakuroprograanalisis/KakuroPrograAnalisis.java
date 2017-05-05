@@ -21,7 +21,7 @@ public class KakuroPrograAnalisis {
      */
     public static void main(String[] args) {
         // TODO code application logic here   
-        for(int i= 6; i < 46; i++){
+        /*for(int i= 6; i < 46; i++){
             if(i >=6 && i<=9){
                 ArrayList<int[]> nuevo = backtrackSoluciones(i,3);
                 System.out.println("El numero: "+Integer.toString(i));
@@ -59,8 +59,8 @@ public class KakuroPrograAnalisis {
                 System.out.println("----------------------------------------------------");
                 
             }
-        }
-        //ArrayList<int[]> nuevo = backtrackNumeros(33,7);
+        }*/
+        //ArrayList<int[]> nuevo = backtrackNumeros(11,4);
        //int[][] numero = new int[3][3];
         //System.out.println(nuevo.size());
         /*Random rnd = new Random();

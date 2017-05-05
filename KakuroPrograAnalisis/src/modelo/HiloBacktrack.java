@@ -51,7 +51,7 @@ public class HiloBacktrack extends Thread{
         for(int i = 0; i < matriz.length; i++){
             for(int j = 0; j < matriz.length; j++){
                 nuevo[i][j] = new Casilla(matriz[i][j].numero);
-                nuevo[i][j].orientacion = matriz[i][j].orientacion;
+                //nuevo[i][j].orientacion = matriz[i][j].orientacion;
                 nuevo[i][j].principal = matriz[i][j].principal;
                 nuevo[i][j].principal2 = matriz[i][j].principal2;
                 nuevo[i][j].cantidadCasillas = matriz[i][j].cantidadCasillas;
